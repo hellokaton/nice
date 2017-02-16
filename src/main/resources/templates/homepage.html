@@ -1,0 +1,98 @@
+#include("./comm/header.html")
+<link rel="stylesheet" href="/static/css/set2.css"/>
+<div class="container grid-960 text-center">
+    <div class="columns" style="margin-top: 20px;">
+        <div class="column col-5 col-sm-12" style="margin: 0 auto;">
+            <div class="card">
+                <div class="card-header" style="height: 65px;">
+                    <div class="float-left">
+                        <figure class="avatar avatar-xl">
+                            <img src="${img_addr(user.avatar)}" width="100" height="100"/>
+                        </figure>
+                    </div>
+                    <div class="float-left ml-10 pt-5">
+                        <h4 class="card-title">${user.nickname}</h4>
+                    </div>
+                    #if(null != login_user && login_user.username != user.username)
+                    <div class="float-right">
+                        <button class="btn btn-sm">关注</button>
+                    </div>
+                    #end
+                </div>
+                <div class="card-body">
+                    <div class="columns">
+                        <div class="column col-xs-4">主题：${user.topics}</div>
+                        <div class="column col-xs-4">${user.followers}人关注</div>
+                        <div class="column col-xs-4">正在关注${user.following}人</div>
+                    </div>
+                    #if(user.signature != null && user.signature != '')
+                    <h6 class="card-meta">
+                        <blockquote>
+                            <cite>${user.signature}</cite>
+                        </blockquote>
+                    </h6>
+                    #end
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="columns col-10 col-sm-12" style="margin: 20px auto 0;">
+        #for(topic : topics)
+        <div class="column col-4 col-sm-12 grid">
+            <figure class="effect-goliath">
+                <a href="/topic/${topic.id}">
+                    <img src="${img_addr(topic.content)}" width="100%" height="100%">
+                    <figcaption>
+                        <p style="line-height: 10px; ">
+                            <span style="padding-left: 40px;">
+                                <i class="ion-ios-heart" style="color: #ed4956;"> </i>${topic.stars}
+                            </span>
+                            <span style="padding-left: 40px;">
+                                <i class="ion-ios-chatboxes" style="color: #fff205;"> </i>${topic.comments}
+                            </span>
+                        </p>
+                    </figcaption>
+                </a>
+            </figure>
+        </div>
+        #end
+        #if(null==topics || topics.size()==0)
+        <mark>这位老哥还没有发表主题哦.</mark>
+        #end
+
+        #if(null != topics && topics.size()>8)
+        <div class="column col-12 text-center more" style="margin: 0 auto;">
+            <button class="btn user-load-more" page="2">加载更多</button>
+        </div>
+        #end
+    </div>
+</div>
+
+#include("./comm/meta.html")
+#include("./comm/footer.html")
+
+<script id="user-topic-tpl" type="text/html">
+    {{#topics}}
+    <div class="column col-4 col-sm-12 grid">
+        <figure class="effect-goliath">
+            <a href="/topic/{{ id }}">
+                <img src="{{ img_url }}/{{ content }}" width="100%" height="100%">
+                <figcaption>
+                    <p style="line-height: 10px; ">
+                        <span style="padding-left: 40px;">
+                            <i class="ion-ios-heart" style="color: #ed4956;"> </i>{{ stars }}
+                        </span>
+                        <span style="padding-left: 40px;">
+                            <i class="ion-ios-chatboxes" style="color: #fff205;"> </i>{{ comments }}
+                        </span>
+                    </p>
+                </figcaption>
+            </a>
+        </figure>
+    </div>
+    {{/topics}}
+</script>
+
+</body>
+</html>
