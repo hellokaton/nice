@@ -1,0 +1,77 @@
+<div id="reg-modal" class="modal modal-sm">
+    <div class="modal-overlay"></div>
+    <div class="modal-container" role="document">
+        <div class="modal-header">
+            <button type="button" class="btn btn-clear float-right" aria-label="close"></button>
+            <div class="modal-title">注册账号</div>
+        </div>
+        <div class="modal-body">
+            <div class="content">
+                <form id="reg-form" data-toggle="validator" role="form">
+                    <div class="form-group">
+                        <input class="form-input" type="text" placeholder="请输入用户名[5-20位]" name="username" pattern="^[_A-z0-9]{5,20}$"
+                               data-minlength="5" required data-error="请输入用户名"/>
+                        <p class="help-block with-errors form-input-hint"></p>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-input" type="email" placeholder="请输入邮箱，用于激活" name="email" required
+                               data-error="请输入正确的邮箱地址"/>
+                        <p class="help-block with-errors form-input-hint"></p>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-input" type="password" placeholder="请输入6-14位密码" name="password" data-minlength="6"
+                               data-maxlength="14" required data-error="请输入6-14位密码"/>
+                        <p class="help-block with-errors form-input-hint"></p>
+                    </div>
+                    <div class="form-group text-center">
+                        <!--<input class="form-input" type="file" />-->
+                        <input type="hidden" name="avatar" id="user_avatar" value=""/>
+                        <figure class="avatar avatar-xl">
+                            <img id="upload_img" width="100" height="100"
+                                 onclick="doUpload()" style="cursor: pointer;"/>
+                            <input type="file" name="fileUpload" class="fileUpload" accept="image/png,image/jpg,image/jpeg" style="display: none;"/>
+                        </figure>
+                        <label class="form-label" style="margin-top: 5px;">
+                            <mark>设置个头像吧 d(`･∀･)b</mark>
+                        </label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <a class="btn btn-link" aria-label="close">关闭</a>
+                        <button class="btn btn-primary" type="submit">注册</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="signin-modal" class="modal modal-sm">
+    <div class="modal-overlay"></div>
+    <div class="modal-container" role="document">
+        <div class="modal-header">
+            <button type="button" class="btn btn-clear float-right" aria-label="close"></button>
+            <div class="modal-title">登录到Annal</div>
+        </div>
+        <div class="modal-body">
+            <div class="content">
+                <form id="signin-form" data-toggle="validator" role="form">
+                    <div class="form-group">
+                        <input class="form-input" type="text" name="loginname" placeholder="请输入用户名/邮箱" required />
+                        <p class="help-block with-errors form-input-hint"></p>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-input" type="password" name="password" placeholder="请输入密码" required />
+                        <p class="help-block with-errors form-input-hint"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-link" aria-label="close">关闭</a>
+                        <button class="btn btn-primary" type="submit">登录</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

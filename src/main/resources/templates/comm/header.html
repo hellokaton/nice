@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nice | ${title ?! '你的故事'}</title>
+    <link rel="stylesheet" href="/static/css/ionicons.min.css"/>
+    <link rel="stylesheet" href="/static/css/spectre.min.css"/>
+    <link rel="stylesheet" href="/static/css/style.css"/>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/base.js"></script>
+</head>
+<body>
+<div class="header mb-10">
+    <div class="container grid-960 col-9 col-sm-12">
+        <!--navbar-->
+        <header class="navbar">
+            <section class="navbar-section">
+                <a href="/" class="navbar-brand">
+                    <img src="/static/img/logo.png" width="25" height="25" style="vertical-align:middle;"/>
+                </a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/" class="title">Nice</a>
+                <div style="padding-left: 10rem;">
+                    <a href="/explore" class="explore">发现</a>
+                </div>
+            </section>
+            <section class="navbar-section" style="margin-left: -12rem;">
+                <div class="input-group input-inline">
+                    <input id="search-inp" class="form-input search" type="text" placeholder="搜索" value="${q}"/>
+                </div>
+            </section>
+            <section class="navbar-section">
+                #if(null == login_user)
+                <span class="explore reg-btn">注册</span>
+                <!--<button class="btn btn-link reg-btn">注册</button>-->
+                &nbsp;&nbsp;
+                <span class="explore signin-btn">登录</span>
+                <!--<button class="btn btn-link signin-btn">登录</button>-->
+                #else
+                <div class="dropdown">
+                    <a class="btn btn-link dropdown-toggle" tabindex="0">
+                        ${login_user.nickname} <i class="icon-caret"></i>
+                    </a>
+                    <ul class="menu">
+                        <li class="menu-item">
+                            <a href="/u/${login_user.username}"><i class="ion-ios-home"> </i>我的主页</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/publish"><i class="ion-ios-compose"> </i>发布主题</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/setting"><i class="ion-ios-gear"> </i>个人设置</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/logout"><i class="ion-ios-trash"> </i>注销</a>
+                        </li>
+                    </ul>
+                </div>
+                #end
+            </section>
+        </header>
+    </div>
+</div>
+<script type="text/javascript">
+    var IMG_URL = '${img_url}';
+    var SITE_URL = '${site_url}';
+    var LOGIN_USER = '${login_user.username ?! ""}';
+</script>

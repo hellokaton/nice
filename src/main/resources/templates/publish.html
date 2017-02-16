@@ -1,0 +1,96 @@
+#include("./comm/header.html", {title:'发布主题'})
+<style>
+    .figure{
+        margin: 1em 0px;
+    }
+</style>
+<div class="container grid-960">
+    <div class="columns">
+        <div class="column col-8 col-xs-12" style="margin: 0 auto;">
+            <form id="publish-form" data-toggle="validator" role="form">
+                <div class="form-group">
+                    <figure class="figure">
+                        <input type="hidden" name="content" id="content"/>
+                        <img id="publish-img" src="/static/img/bg/${rand}.jpg" width="100%" class="img-responsive rounded" onclick="publisUp();" style="cursor: pointer; max-height: 400px;"/>
+                        <input type="file" name="annalUpload" class="annalUpload ladda-button" data-style="zoom-out"
+                               accept="image/png,image/jpg,image/jpeg" style="display: none;"/>
+                        <figcaption class="figure-caption text-center" style="margin-top: 10px;"><mark>上传你的故事</mark></figcaption>
+                    </figure>
+                </div>
+                <div class="form-group">
+                    <textarea name="title" class="form-input" rows="3" placeholder="可以对你的故事进行描述.."></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">发布</button>
+                    <button class="btn btn-link" type="reset">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+#include("./comm/meta.html")
+#include("./comm/footer.html")
+<script type="text/javascript">
+
+    $('#publish-form').validator().on('submit', function (e) {
+        stopDefault(e);
+        var content = $('#publish-form #content').val();
+        if(content == ''){
+            alert('请上传图片！');
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: '/publish',
+            data: $('#publish-form').serialize(),
+            dataType: 'json',
+            success: function (result) {
+                if (result && result.success) {
+                    window.location.href = '/';
+                } else {
+                    if(result.msg){
+                        alert(result.msg);
+                    } else {
+                        alert('登录失败');
+                    }
+                }
+            }
+        });
+    });
+
+    $(".annalUpload").liteUploader({
+        script: "/uploadfile",
+        params: {type: 'topic'},
+        rules: {
+            allowedFileTypes: "image/jpeg,image/png,image/jpeg",
+            maxSize: 5120000
+        }
+    }).on("lu:success", function (e, data) {
+        if (data) {
+            $("#publish-img").attr('src', data.url);
+            $("#content").val(data.savekey);
+        }
+    }).on("lu:errors", function (e, data) {
+        console.log(data);
+        if (data && data.length > 0) {
+            var item = data[0];
+            if (item && item.errors && item.errors.length > 0) {
+                var err = item.errors[0];
+                if (err.type == 'size') {
+                    alert("图片大小超出限制,请重新上传");
+                }
+            }
+        }
+    });
+
+    $(".annalUpload").change(function () {
+        $(this).data("liteUploader").startUpload();
+    });
+
+    function publisUp() {
+        $(".annalUpload").click();
+    }
+
+</script>
+</body>
+</html>

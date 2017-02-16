@@ -1,0 +1,180 @@
+#include("./comm/header.html", {title:'个人设置'})
+<div class="container grid-960">
+    <div class="columns col-6" style="margin: 0 auto;">
+        <div class="column col-12 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">用户编辑</h4>
+                </div>
+                <div class="panel-body">
+                    <form id="setting-form" data-toggle="validator" role="form" class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-3">
+                                <label class="form-label">账号</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-input" style="background-color: #b3b3b3;" type="text" disabled
+                                       value="${login_user.username}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-3">
+                                <label class="form-label">昵称</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-input" type="text" placeholder="请输入昵称" name="nickname" value="${login_user.nickname}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-3">
+                                <label class="form-label">个性签名</label>
+                            </div>
+                            <div class="col-9">
+                                <textarea class="form-input" name="signature" rows="3" placeholder="来介绍下自己？">${login_user.signature}</textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-3">
+                                <label class="form-label">头像</label>
+                            </div>
+                            <div class="col-9">
+                                <input type="hidden" name="avatar" id="user_avatar" value=""/>
+                                <figure class="avatar avatar-xl">
+                                    <img id="upload_avatar" src="${img_addr(login_user.avatar)}" width="100"
+                                         height="100" onclick="doUploadAvatar()" style="cursor: pointer;"/>
+                                </figure>
+                                <input type="file" name="fileUpload" class="avatarUpload"
+                                       accept="image/png,image/jpg,image/jpeg" style="display: none;"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-3"></div>
+                            <div class="col-9">
+                                <button class="btn btn-primary" type="submit">保存设置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">修改密码</h4>
+                </div>
+                <div class="panel-body">
+                    <form id="uppwd-form" data-toggle="validator" role="form" class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-3">
+                                <label class="form-label">新密码</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-input" type="password" placeholder="请输入6-14位新密码" name="newpwd" id="newpwd" data-minlength="6"
+                                       data-maxlength="14" required data-error="请输入6-14位密码"/>
+                                <p class="help-block with-errors form-input-hint"></p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-3">
+                                <label class="form-label">确认新密码</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-input" type="password" placeholder="请确认新密码" id="repwd" data-match="#newpwd" data-match-error="密码输入不一致" required />
+                                <p class="help-block with-errors form-input-hint"></p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-3"></div>
+                            <div class="col-9">
+                                <button class="btn btn-primary" type="submit">修改密码</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/static/js/jquery.liteuploader.min.js"></script>
+<script type="text/javascript" src="//cdn.bootcss.com/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+<script>
+    $(".avatarUpload").liteUploader({
+        script: '/uploadfile',
+        params: {type: 'avatar'},
+        rules: {
+            allowedFileTypes: "image/jpeg,image/png,image/jpeg",
+            maxSize: 5120000
+        }
+    }).on("lu:success", function (e, data) {
+        if (data) {
+            $("#upload_avatar").attr('src', data.url);
+            $("#user_avatar").val(data.savekey);
+        }
+    }).on("lu:errors", function (e, data) {
+        console.log(data);
+        if (data && data.length > 0) {
+            var item = data[0];
+            if (item && item.errors && item.errors.length > 0) {
+                var err = item.errors[0];
+                if (err.type == 'size') {
+                    alert("图片大小超出限制,请重新上传");
+                }
+            }
+        }
+    });
+
+    $(".avatarUpload").change(function () {
+        $(this).data("liteUploader").startUpload();
+    });
+
+    //上传方法
+    function doUploadAvatar() {
+        $(".avatarUpload").click();
+    }
+
+    $('#setting-form').validator().on('submit', function (e) {
+        stopDefault(e);
+        $.ajax({
+            type: "POST",
+            url: '/setting',
+            data: $('#setting-form').serialize(),
+            dataType: 'json',
+            success: function (result) {
+                if (result && result.success) {
+                    alert('保存成功！');
+                    window.location.reload();
+                } else {
+                    if (result.msg) {
+                        alert(result.msg);
+                    } else {
+                        alert('保存失败');
+                    }
+                }
+            }
+        });
+    });
+
+    $('#uppwd-form').validator().on('submit', function (e) {
+        stopDefault(e);
+        $.ajax({
+            type: "POST",
+            url: '/up_pwd',
+            data: $('#uppwd-form').serialize(),
+            dataType: 'json',
+            success: function (result) {
+                if (result && result.success) {
+                    alert('密码修改成功！');
+                    $('#uppwd-form')[0].reset;
+                } else {
+                    if (result.msg) {
+                        alert(result.msg);
+                    } else {
+                        alert('密码修改失败');
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

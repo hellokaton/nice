@@ -1,0 +1,120 @@
+#include("./comm/header.html")
+
+<div class="container grid-960">
+    <div class="columns home-topics">
+        #for(topic : topics)
+        <div class="column col-8 col-sm-12 home-topic" tid="${topic.id}">
+            <div class="card">
+                <div class="card-image">
+                    <img class="img-responsive" src="${img_addr(topic.content)}" />
+                </div>
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <figure class="avatar avatar-sm">
+                            <a href="/u/${topic.username}"><img class="avatar" src="${img_addr(topic.avatar)}"></a>
+                        </figure>
+                        &nbsp;
+                        <a href="/u/${topic.username}"><span>${topic.nickname}</span></a>
+                        <span class="card-meta float-right" style="font-size: 0.8em;">发布于${timespan(topic.created)}</span>
+                    </h5>
+                </div>
+                #if(topic.title != null && topic.title != '')
+                <div class="card-body">
+                    ${topic.title}
+                </div>
+                #end
+                <div class="card-footer" style="padding-top: 0;">
+                    #if(login_user != null)
+                    <div class="topic-footer">
+                        <div class="divider"></div>
+                        <div class="float-left">
+                            #if(login_user==null || topic.starid == null)
+                            <a class="topic-star"><i class="ion-ios-heart-outline"></i></a>
+                            <a class="topic-unstar hide"><i class="ion-ios-heart"></i></a>
+                            #else
+                            <a class="topic-unstar"><i class="ion-ios-heart"></i></a>
+                            <a class="topic-star hide"><i class="ion-ios-heart-outline"></i></a>
+                            #end
+                            &nbsp;&nbsp;
+                            <a class="topic-share"><i class="ion-share"></i></a>
+                            &nbsp;&nbsp;
+                        </div>
+                        <div class="float-left col-9 col-sm-7">
+                            <input type="text" class="form-input" style="border-radius: 0; border-color: #fff;" placeholder="输入评论...">
+                        </div>
+                        <div class="float-left">
+                            &nbsp;<button tid="${topic.id}" class="btn btn-link comment-btn">发表</button>
+                        </div>
+                    </div>
+                    #end
+                </div>
+            </div>
+        </div>
+        #end
+        #if(null!=topics&&topics.size()>8)
+        <div class="column col-12 text-center more" style="margin: 0 auto;">
+            <button class="btn home-load-more" page="2">加载更多</button>
+        </div>
+        #end
+    </div>
+</div>
+#include("./comm/meta.html")
+#include("./comm/footer.html")
+
+
+<!--首页动态加载模板-->
+<script id="home-topic-tpl" type="text/html">
+    {{#topics}}
+    <div class="column col-8 col-sm-12 home-topic" tid="{{ id }}">
+        <div class="card">
+            <div class="card-image">
+                <img class="img-responsive" src="{{ img_url }}/{{ content }}">
+            </div>
+            <div class="card-header">
+                <h5 class="card-title">
+                    <figure class="avatar avatar-sm">
+                        <a href="/u/{{ username }}"><img src="{{ img_url }}/{{ avatar }}"></a>
+                    </figure>
+                    &nbsp;
+                    <a href="/u/{{ username }}"><span>{{ nickname }}</span></a>
+                    <span class="card-meta float-right" style="font-size: 0.8em;">发布于{{ published }}</span>
+                </h5>
+            </div>
+            <div class="card-body hide">
+                {{ title }}
+            </div>
+
+            <div class="card-footer" style="padding-top: 0;">
+                {{#loginuser}}
+                <div class="topic-footer">
+                    <div class="divider"></div>
+                    <div class="float-left">
+                        {{^starid}}
+                        <a class="topic-star"><i class="ion-ios-heart-outline"></i></a>
+                        <a class="topic-unstar hide"><i class="ion-ios-heart"></i></a>
+                        {{/starid}}
+                        {{#starid}}
+                        <a class="topic-unstar"><i class="ion-ios-heart"></i></a>
+                        <a class="topic-star hide"><i class="ion-ios-heart-outline"></i></a>
+                        {{/starid}}
+                        &nbsp;&nbsp;
+                        <a class="topic-share"><i class="ion-share"></i></a>
+                        &nbsp;&nbsp;
+                    </div>
+                    <div class="float-left col-9 col-sm-7">
+                        <input type="text" class="form-input" style="border-radius: 0; border-color: #fff;" placeholder="输入评论...">
+                    </div>
+                    <div class="float-left">
+                        &nbsp;<button tid="{{ id }}" class="btn btn-link comment-btn">发表</button>
+                    </div>
+                </div>
+                {{/loginuser}}
+            </div>
+
+        </div>
+    </div>
+    {{/topics}}
+</script>
+
+</body>
+</html>

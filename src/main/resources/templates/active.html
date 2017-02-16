@@ -1,0 +1,23 @@
+#include("./comm/header.html", {title:'用户激活'})
+
+<div class="container">
+    <div class="col-3" style="margin: 0 auto;">
+    #if(success)
+    <div class="toast toast-primary">
+        <button class="btn btn-clear float-right"></button>
+        <i class="icon icon-error_outline"></i> 恭喜你激活成功，现在可以登录了。
+    </div>
+    #else
+    <div class="toast toast-danger">
+        <button class="btn btn-clear float-right"></button>
+        <i class="icon icon-error_outline"></i> ${msg}
+    </div>
+    #end
+    </div>
+</div>
+
+#include("./comm/meta.html")
+#include("./comm/footer.html")
+
+</body>
+</html>
