@@ -7,79 +7,71 @@
     <groupId>io.github.biezhi</groupId>
     <artifactId>nice</artifactId>
     <version>1.0.0</version>
-    
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mysql.version>5.1.38</mysql.version>
         <druid.version>1.0.24</druid.version>
+        <common-email.version>1.4</common-email.version>
+        <blade-tpl.verion>0.1.0-beta</blade-tpl.verion>
+        <blade-jdbc.version>0.1.6</blade-jdbc.version>
+        <blade-mvc.version>2.0.0-beta</blade-mvc.version>
     </properties>
 
     <dependencies>
         <!-- mvc -->
         <dependency>
             <groupId>com.bladejava</groupId>
-            <artifactId>blade-core</artifactId>
-            <version>1.7.0</version>
+            <artifactId>blade-mvc</artifactId>
+            <version>${blade-mvc.version}</version>
         </dependency>
+
         <!-- 数据库操作 -->
         <dependency>
             <groupId>com.bladejava</groupId>
             <artifactId>blade-jdbc</artifactId>
-            <version>0.1.4-alpha</version>
+            <version>${blade-jdbc.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.sql2o</groupId>
-            <artifactId>sql2o</artifactId>
-            <version>1.6.0-RC3</version>
-        </dependency>
+
         <!-- 模板引擎 -->
         <dependency>
             <groupId>com.bladejava</groupId>
             <artifactId>blade-template-jetbrick</artifactId>
-            <version>0.0.8</version>
+            <version>${blade-tpl.verion}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
             <version>${druid.version}</version>
         </dependency>
-        <!--web容器-->
-        <dependency>
-            <groupId>com.bladejava</groupId>
-            <artifactId>blade-embed-jetty</artifactId>
-            <version>0.0.9</version>
-        </dependency>
+
         <!-- 数据库 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.38</version>
+            <version>${mysql.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-email</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
+            <version>${common-email.version}</version>
         </dependency>
 
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>oss-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <!--<repositories>-->
+    <!--<repository>-->
+    <!--<id>oss-snapshots</id>-->
+    <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+    <!--<releases>-->
+    <!--<enabled>false</enabled>-->
+    <!--</releases>-->
+    <!--<snapshots>-->
+    <!--<enabled>true</enabled>-->
+    <!--</snapshots>-->
+    <!--</repository>-->
+    <!--</repositories>-->
 
     <build>
         <finalName>nice</finalName>
@@ -88,10 +80,10 @@
                 <directory>src/main/java</directory>
                 <filtering>false</filtering>
             </resource>
-            <!--<resource>
+            <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
-            </resource>-->
+            </resource>
         </resources>
         <plugins>
             <plugin>
@@ -108,7 +100,7 @@
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptors>
-                        <descriptor>assembly.xml</descriptor>
+                        <descriptor>package.xml</descriptor>
                     </descriptors>
                     <outputDirectory>${project.build.directory}/dist/</outputDirectory>
                 </configuration>

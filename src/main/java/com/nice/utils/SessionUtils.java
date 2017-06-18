@@ -1,12 +1,14 @@
 package com.nice.utils;
 
+import com.blade.mvc.WebContext;
+import com.blade.mvc.http.Session;
 import com.nice.config.Constant;
 import com.nice.model.User;
-import com.blade.context.WebContextHolder;
 import com.blade.kit.StringKit;
 import com.blade.mvc.http.Request;
 import com.blade.mvc.http.Response;
-import com.blade.mvc.http.wrapper.Session;
+
+import java.util.Optional;
 
 /**
  * Created by biezhi on 2017/2/14.
@@ -40,7 +42,7 @@ public final class SessionUtils {
     }
 
     public static User getLoginUser() {
-        Session session = WebContextHolder.me().getRequest().session();
+        Session session = WebContext.request().session();
         if(null == session){
             return null;
         }
@@ -68,7 +70,7 @@ public final class SessionUtils {
                 boolean isSSL = Constant.SITE_URL.startsWith("https");
                 response.removeCookie(cookieName);
 
-                String path = WebContextHolder.me().getContext().getContextPath();
+                String path = WebContext.contextPath();
                 response.cookie(path, cookieName, data, 604800, isSSL);
             } catch (Exception e){
             }
@@ -77,10 +79,10 @@ public final class SessionUtils {
 
     public static String getCookie(Request request, String cookieName) {
         if(null != request && StringKit.isNotBlank(cookieName)){
-            String val = request.cookie(cookieName);
-            if(StringKit.isNotBlank(val)){
+            Optional<String> val = request.cookie(cookieName);
+            if (val.isPresent()) {
                 try {
-                    return Utils.decrypt(val, Constant.AES_SALT);
+                    return Utils.decrypt(val.get(), Constant.AES_SALT);
                 } catch (Exception e) {
                 }
                 return "";

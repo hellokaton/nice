@@ -1,17 +1,17 @@
 package com.nice.service.impl;
 
+import com.blade.ioc.annotation.Bean;
 import com.nice.exception.TipException;
 import com.nice.ext.ActionType;
 import com.nice.model.Comment;
 import com.nice.service.CommentService;
 import com.nice.service.TopicService;
 import com.blade.ioc.annotation.Inject;
-import com.blade.ioc.annotation.Service;
 import com.blade.jdbc.ActiveRecord;
 import com.blade.kit.DateKit;
 import com.blade.kit.StringKit;
 
-@Service
+@Bean
 public class CommentServiceImpl implements CommentService {
 
 	@Inject
@@ -42,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
 		commen.setUsername(username);
 		commen.setContent(comment);
 		commen.setTid(tid);
-		commen.setCreated(DateKit.getCurrentUnixTime());
+		commen.setCreated(DateKit.nowUnix());
 
 		activeRecord.insert(commen);
 		topicService.upCount(ActionType.comments, tid, 1);

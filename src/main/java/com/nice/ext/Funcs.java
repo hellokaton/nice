@@ -21,7 +21,7 @@ public class Funcs {
 	 * @return
 	 */
 	public static int random(int max) {
-		int radom = Integer.valueOf(StringKit.getRandomNumber(1, max));
+		int radom = Integer.valueOf(StringKit.rand(1, max));
 		if(radom == 0){
 			return 1;
 		}
@@ -35,7 +35,7 @@ public class Funcs {
 	 */
 	public static String fmtdate(Integer unixTime) {
 		if(null != unixTime){
-			return DateKit.formatDateByUnixTime(unixTime, "yyyy-MM-dd");
+			return DateKit.toString(unixTime, "yyyy-MM-dd");
 		}
 		return "";
 	}
@@ -48,7 +48,7 @@ public class Funcs {
 	 */
 	public static String fmtdate(Integer unixTime, String patten) {
 		if(null != unixTime && StringKit.isNotBlank(patten)){
-			return DateKit.formatDateByUnixTime(unixTime, patten);
+			return DateKit.toString(unixTime, patten);
 		}
 		return "";
 	}
@@ -58,7 +58,7 @@ public class Funcs {
 	}
 
 	public static String today(String patten){
-		return fmtdate(DateKit.getCurrentUnixTime(), patten);
+		return fmtdate(DateKit.nowUnix(), patten);
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class Funcs {
 			return r;
 
 		long nowtimelong = System.currentTimeMillis();
-		long ctimelong = DateKit.getDateByUnixTime(ctime).getTime();
+		long ctimelong = ctime * 1000;
 		long result = Math.abs(nowtimelong - ctimelong);
 		
 		// 20秒内

@@ -1,5 +1,6 @@
 package com.nice.service.impl;
 
+import com.blade.ioc.annotation.Bean;
 import com.nice.ext.HomeTopic;
 import com.nice.exception.TipException;
 import com.nice.ext.ActionType;
@@ -9,7 +10,6 @@ import com.nice.service.UserService;
 import com.nice.utils.PageHelper;
 import com.nice.utils.UUID;
 import com.blade.ioc.annotation.Inject;
-import com.blade.ioc.annotation.Service;
 import com.blade.jdbc.ar.SampleActiveRecord;
 import com.blade.jdbc.model.PageRow;
 import com.blade.jdbc.model.Paginator;
@@ -19,7 +19,7 @@ import org.sql2o.Sql2o;
 
 import java.util.List;
 
-@Service
+@Bean
 public class TopicServiceImpl implements TopicService {
 
     @Inject
@@ -49,7 +49,7 @@ public class TopicServiceImpl implements TopicService {
         Topic topic = new Topic();
         topic.setId(id);
         topic.setUsername(username);
-        topic.setCreated(DateKit.getCurrentUnixTime());
+        topic.setCreated(DateKit.nowUnix());
         topic.setTitle(title);
         topic.setContent(content);
         topic.setComments(0);
@@ -75,7 +75,7 @@ public class TopicServiceImpl implements TopicService {
             sql = "select a.id, a.username, b.nickname, b.avatar, a.title, a.content, a.stars, a.comments, a.created, c.id as starid from t_topic a left join t_user b on a.username = b.username " +
                     "left join t_stars c on a.id = c.tid and c.username = '"+ me +"' where 1=1 " + where + " order by a.created desc";
         }
-        Sql2o sql2o = activeRecord.getSql2o();
+        Sql2o sql2o = activeRecord.sql2o();
         Paginator<HomeTopic> topicPaginator = PageHelper.go(sql2o, HomeTopic.class, sql, new PageRow(page, limit));
         if (null != topicPaginator) {
             return topicPaginator.getList();

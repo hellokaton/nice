@@ -1,29 +1,30 @@
 package com.nice.controller;
 
+import com.blade.ioc.annotation.Inject;
+import com.blade.kit.PatternKit;
+import com.blade.kit.StringKit;
+import com.blade.mvc.annotation.*;
+import com.blade.mvc.http.HttpMethod;
+import com.blade.mvc.http.Request;
+import com.blade.mvc.http.Response;
+import com.blade.mvc.multipart.FileItem;
+import com.blade.mvc.ui.RestResponse;
 import com.nice.config.Constant;
 import com.nice.exception.TipException;
 import com.nice.model.User;
 import com.nice.service.UserService;
 import com.nice.utils.SessionUtils;
 import com.nice.utils.UUID;
-import com.nice.utils.Utils;
-import com.blade.ioc.annotation.Inject;
-import com.blade.kit.FileKit;
-import com.blade.kit.PatternKit;
-import com.blade.kit.StringKit;
-import com.blade.kit.json.JSONObject;
-import com.blade.mvc.annotation.*;
-import com.blade.mvc.http.HttpMethod;
-import com.blade.mvc.http.Request;
-import com.blade.mvc.http.Response;
-import com.blade.mvc.multipart.FileItem;
-import com.blade.mvc.view.RestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-@Controller
+@Path
 public class CommonController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonController.class);
@@ -38,7 +39,7 @@ public class CommonController {
      * @param password
      * @return
      */
-    @Route(value = "signin", method = HttpMethod.POST)
+    @PostRoute("signin")
     @JSON
     public RestResponse signin(@QueryParam String loginname, @QueryParam String password,
                                Request request, Response response) {
@@ -116,26 +117,23 @@ public class CommonController {
     public void logout(Request request, Response response) {
         SessionUtils.removeUser(request.session());
         SessionUtils.removeCookie(response);
-        response.go("/");
+        response.redirect("/");
     }
 
     /**
      * 上传
      */
     @Route(value = "/uploadfile", method = HttpMethod.POST)
-    public void upload(Request request, Response response) {
+    public void upload(Request request, Response response, @MultipartParam FileItem fileItem) {
         User user = SessionUtils.getLoginUser();
         if (null == user) {
             return;
         }
-        FileItem[] fileItems = request.files();
-        if (null != fileItems && fileItems.length > 0) {
+        if (null != fileItem) {
 
-            FileItem fileItem = fileItems[0];
+            Optional<String> type = request.query("type");
 
-            String type = request.querys().get("type");
-
-            String suffix = FileKit.getExtension(fileItem.fileName());
+            String suffix = StringKit.fileExt(fileItem.fileName());
             if (StringKit.isNotBlank(suffix)) {
                 suffix = "." + suffix;
             }
@@ -144,7 +142,7 @@ public class CommonController {
                 return;
             }
             String savePath = "";
-            if(type.equals("avatar")){
+            if (type.equals("avatar")) {
                 savePath = type + "/users/" + user.getUsername() + suffix;
             } else {
                 String fileName = UUID.UU32() + suffix;
@@ -155,18 +153,23 @@ public class CommonController {
             String filePath = Constant.UPLOAD_FOLDER + File.separator + savePath;
             File file = new File(filePath);
             try {
-                if(file.exists()){
+                if (file.exists()) {
                     file.delete();
                 }
-                if (!FileKit.exist(file.getParent())) {
+                if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
                 }
-                Utils.copyFileUsingFileChannels(fileItem.file(), file);
-                JSONObject res = new JSONObject();
-                res.put("status", 200);
-                res.put("savekey", savePath);
-                res.put("url", Constant.IMG_URL + "/" + savePath);
-                response.json(res.toString());
+
+                FileOutputStream fos = new FileOutputStream(file);
+                fos.write(fileItem.data());
+                fos.close();
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("status", 200);
+                map.put("savekey", savePath);
+                map.put("url", Constant.IMG_URL + "/" + savePath);
+                response.json(map);
+
             } catch (Exception e) {
                 LOGGER.error("上传失败", e);
             }

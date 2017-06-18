@@ -1,11 +1,11 @@
 package com.nice;
 
-import static com.blade.Blade.$;
+import com.blade.Blade;
 
 public class Application {
 
     public static void main(String[] args) {
-        $().start(Application.class);
+        Blade.me().start(Application.class, args);
     }
 
 }

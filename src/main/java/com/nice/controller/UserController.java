@@ -1,29 +1,26 @@
 package com.nice.controller;
 
+import com.blade.ioc.annotation.Inject;
+import com.blade.kit.EncrypKit;
+import com.blade.kit.StringKit;
+import com.blade.mvc.annotation.*;
+import com.blade.mvc.http.HttpMethod;
+import com.blade.mvc.http.Request;
+import com.blade.mvc.ui.RestResponse;
 import com.nice.exception.TipException;
 import com.nice.model.User;
 import com.nice.service.UserService;
 import com.nice.utils.SessionUtils;
-import com.blade.ioc.annotation.Inject;
-import com.blade.kit.EncrypKit;
-import com.blade.kit.StringKit;
-import com.blade.mvc.annotation.Controller;
-import com.blade.mvc.annotation.JSON;
-import com.blade.mvc.annotation.QueryParam;
-import com.blade.mvc.annotation.Route;
-import com.blade.mvc.http.HttpMethod;
-import com.blade.mvc.http.Request;
-import com.blade.mvc.view.RestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Created by biezhi on 2017/2/14.
  */
-@Controller
+@Path
 public class UserController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Inject
     private UserService userService;
@@ -33,12 +30,12 @@ public class UserController {
      *
      * @return
      */
-    @Route(value = "/setting", method = HttpMethod.GET)
+    @GetRoute("/setting")
     public String settingPage() {
         return "setting";
     }
 
-    @Route(value = "/setting", method = HttpMethod.POST)
+    @PostRoute("/setting")
     @JSON
     public RestResponse setting(@QueryParam String nickname, @QueryParam String signature,
                                 @QueryParam String avatar, Request request){
@@ -75,7 +72,7 @@ public class UserController {
             if (e instanceof TipException) {
                 restResponse.setMsg(e.getMessage());
             } else {
-                LOGGER.error("保存设置失败", e);
+                log.error("保存设置失败", e);
             }
         }
         return restResponse;
@@ -101,7 +98,7 @@ public class UserController {
             if (e instanceof TipException) {
                 restResponse.setMsg(e.getMessage());
             } else {
-                LOGGER.error("密码修改失败", e);
+                log.error("密码修改失败", e);
             }
         }
         return restResponse;

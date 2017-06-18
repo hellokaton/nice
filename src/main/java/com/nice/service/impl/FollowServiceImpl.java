@@ -2,8 +2,8 @@ package com.nice.service.impl;
 
 import java.util.List;
 
+import com.blade.ioc.annotation.Bean;
 import com.blade.ioc.annotation.Inject;
-import com.blade.ioc.annotation.Service;
 import com.blade.jdbc.ActiveRecord;
 import com.blade.jdbc.core.Take;
 import com.blade.jdbc.model.Paginator;
@@ -12,7 +12,7 @@ import com.nice.model.Follow;
 import com.nice.exception.TipException;
 import com.nice.service.FollowService;
 
-@Service
+@Bean
 public class FollowServiceImpl implements FollowService {
 
 	@Inject

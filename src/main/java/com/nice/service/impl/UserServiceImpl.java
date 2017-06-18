@@ -1,5 +1,13 @@
 package com.nice.service.impl;
 
+import com.blade.ioc.annotation.Bean;
+import com.blade.ioc.annotation.Inject;
+import com.blade.jdbc.ActiveRecord;
+import com.blade.jdbc.core.Take;
+import com.blade.jdbc.model.Paginator;
+import com.blade.kit.DateKit;
+import com.blade.kit.EncrypKit;
+import com.blade.kit.StringKit;
 import com.nice.exception.TipException;
 import com.nice.ext.ActionType;
 import com.nice.model.Acode;
@@ -8,19 +16,11 @@ import com.nice.service.AcodeService;
 import com.nice.service.UserService;
 import com.nice.utils.EmailUtils;
 import com.nice.utils.ThreadUtils;
-import com.blade.ioc.annotation.Inject;
-import com.blade.ioc.annotation.Service;
-import com.blade.jdbc.ActiveRecord;
-import com.blade.jdbc.core.Take;
-import com.blade.jdbc.model.Paginator;
-import com.blade.kit.DateKit;
-import com.blade.kit.EncrypKit;
-import com.blade.kit.StringKit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Bean
 public class UserServiceImpl implements UserService {
 
 	@Inject
@@ -97,8 +97,8 @@ public class UserServiceImpl implements UserService {
 			avatar = "";
 		}
 		user.setAvatar(avatar);
-		user.setCreated(DateKit.getCurrentUnixTime());
-		user.setNickname(username);
+        user.setCreated(DateKit.nowUnix());
+        user.setNickname(username);
 
 		activeRecord.insert(user);
 
@@ -116,8 +116,8 @@ public class UserServiceImpl implements UserService {
 		if(null == acode){
 			throw new TipException("无效的激活码");
 		}
-		if(acode.getExpired() > 0 && acode.getExpired() < DateKit.getCurrentUnixTime()){
-			throw new TipException("激活码已经过期");
+        if (acode.getExpired() > 0 && acode.getExpired() < DateKit.nowUnix()) {
+            throw new TipException("激活码已经过期");
 		}
 		if(acode.getUsed()){
 			throw new TipException("该激活码已经被使用");

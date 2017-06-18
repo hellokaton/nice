@@ -1,14 +1,14 @@
 package com.nice.service.impl;
 
+import com.blade.ioc.annotation.Bean;
+import com.blade.ioc.annotation.Inject;
+import com.blade.jdbc.ActiveRecord;
+import com.blade.kit.DateKit;
 import com.nice.model.Acode;
 import com.nice.service.AcodeService;
 import com.nice.utils.UUID;
-import com.blade.ioc.annotation.Inject;
-import com.blade.ioc.annotation.Service;
-import com.blade.jdbc.ActiveRecord;
-import com.blade.kit.DateKit;
 
-@Service
+@Bean
 public class AcodeServiceImpl implements AcodeService {
 
 	@Inject
@@ -19,7 +19,7 @@ public class AcodeServiceImpl implements AcodeService {
 		Acode acode = new Acode();
 		acode.setUsername(username);
 		acode.setType(type);
-		acode.setCreated(DateKit.getCurrentUnixTime());
+		acode.setCreated(DateKit.nowUnix());
 		acode.setExpired(0);
 		acode.setUsed(false);
 		String code = UUID.UU32();

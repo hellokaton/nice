@@ -1,15 +1,15 @@
 package com.nice.service.impl;
 
+import com.blade.ioc.annotation.Bean;
+import com.blade.jdbc.ActiveRecord;
+import com.blade.jdbc.core.Take;
 import com.nice.ext.ActionType;
 import com.nice.model.Stars;
 import com.nice.service.StarsService;
 import com.nice.service.TopicService;
 import com.blade.ioc.annotation.Inject;
-import com.blade.ioc.annotation.Service;
-import com.blade.jdbc.ActiveRecord;
-import com.blade.jdbc.core.Take;
 
-@Service
+@Bean
 public class StarsServiceImpl implements StarsService {
 
     @Inject

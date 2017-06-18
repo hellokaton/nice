@@ -1,25 +1,24 @@
 package com.nice.controller;
 
-import com.nice.ext.HomeTopic;
+import com.blade.ioc.annotation.Inject;
+import com.blade.mvc.annotation.*;
+import com.blade.mvc.http.Request;
+import com.blade.mvc.ui.RestResponse;
 import com.nice.exception.TipException;
+import com.nice.ext.HomeTopic;
 import com.nice.model.User;
 import com.nice.service.CommentService;
 import com.nice.service.StarsService;
 import com.nice.service.TopicService;
 import com.nice.service.UserService;
 import com.nice.utils.SessionUtils;
-import com.blade.ioc.annotation.Inject;
-import com.blade.mvc.annotation.*;
-import com.blade.mvc.http.HttpMethod;
-import com.blade.mvc.http.Request;
-import com.blade.mvc.view.RestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Random;
 
-@Controller
+@Path
 public class TopicController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TopicController.class);
@@ -43,9 +42,9 @@ public class TopicController {
      *
      * @return
      */
-    @Route(value = "/publish", method = HttpMethod.GET)
+    @GetRoute("/publish")
     public String publishPage(Request request) {
-        int s = r.nextInt(8)%8 + 1;
+        int s = r.nextInt(8) % 8 + 1;
         request.attribute("rand", s);
         return "publish";
     }
@@ -55,7 +54,7 @@ public class TopicController {
      *
      * @return
      */
-    @Route(value = "/publish", method = HttpMethod.POST)
+    @PostRoute("/publish")
     @JSON
     public RestResponse publish(@QueryParam String content, @QueryParam String title) {
 
@@ -87,7 +86,7 @@ public class TopicController {
      * @param comment
      * @return
      */
-    @Route(value = "/comment/:id", method = HttpMethod.POST)
+    @PostRoute("/comment/:id")
     @JSON
     public RestResponse comment(@PathParam String id, @QueryParam String comment) {
 
@@ -117,7 +116,7 @@ public class TopicController {
      * @param id
      * @return
      */
-    @Route(value = "/star/:id", method = HttpMethod.POST)
+    @PostRoute("/star/:id")
     @JSON
     public RestResponse star(@PathParam String id) {
 
@@ -147,7 +146,7 @@ public class TopicController {
      * @param id
      * @return
      */
-    @Route(value = "/unstar/:id", method = HttpMethod.POST)
+    @PostRoute("/unstar/:id")
     @JSON
     public RestResponse unstar(@PathParam String id) {
 
@@ -177,7 +176,7 @@ public class TopicController {
      * @param username
      * @return
      */
-    @Route(value = "/u/:username", method = HttpMethod.GET)
+    @GetRoute("/u/:username")
     public String homepage(@PathParam String username, Request request) {
         request.attribute("title", username + "的主页");
         User user = userService.getUserById(username);
@@ -191,9 +190,11 @@ public class TopicController {
         return "homepage";
     }
 
-    @Route(value = "/topics/:isuser/:page", method = HttpMethod.GET)
+    @GetRoute("/topics/:isuser/:page")
     @JSON
-    public RestResponse topics(@PathParam int isuser, @PathParam int page, @QueryParam(value = "limit", defaultValue = "9") int limit) {
+    public RestResponse topics(@PathParam int isuser, @PathParam int page,
+                               @QueryParam(defaultValue = "9") int limit) {
+
         RestResponse restResponse = new RestResponse();
         String cu = null != SessionUtils.getLoginUser() ? SessionUtils.getLoginUser().getUsername() : null;
         String user = isuser == 1 ? cu : null;
