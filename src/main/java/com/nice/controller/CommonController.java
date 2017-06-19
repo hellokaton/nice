@@ -27,7 +27,7 @@ import java.util.Optional;
 @Path
 public class CommonController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonController.class);
+    private static final Logger log = LoggerFactory.getLogger(CommonController.class);
 
     @Inject
     private UserService userService;
@@ -35,18 +35,19 @@ public class CommonController {
     /**
      * 用户登录
      *
-     * @param loginname
+     * @param username
      * @param password
      * @return
      */
     @PostRoute("signin")
     @JSON
-    public RestResponse signin(@QueryParam String loginname, @QueryParam String password,
+    public RestResponse signin(@QueryParam String username,
+                               @QueryParam String password,
                                Request request, Response response) {
 
         RestResponse restResponse = new RestResponse();
         try {
-            User user = userService.signin(loginname, password);
+            User user = userService.signin(username, password);
             SessionUtils.setLoginUser(request.session(), user);
             SessionUtils.setCookie(response, Constant.USER_IN_COOKIE, user.getUsername());
             restResponse.setSuccess(true);
@@ -54,7 +55,7 @@ public class CommonController {
             if (e instanceof TipException) {
                 restResponse.setMsg(e.getMessage());
             } else {
-                LOGGER.error("登录失败", e);
+                log.error("登录失败", e);
             }
         }
         return restResponse;
@@ -71,8 +72,10 @@ public class CommonController {
      */
     @Route(value = "signup", method = HttpMethod.POST)
     @JSON
-    public RestResponse signup(@QueryParam String username, @QueryParam String password,
-                               @QueryParam String email, @QueryParam String avatar) {
+    public RestResponse signup(@QueryParam String username,
+                               @QueryParam String password,
+                               @QueryParam String email,
+                               @QueryParam String avatar) {
 
         RestResponse restResponse = new RestResponse();
         try {
@@ -82,7 +85,7 @@ public class CommonController {
             if (e instanceof TipException) {
                 restResponse.setMsg(e.getMessage());
             } else {
-                LOGGER.error("注册失败", e);
+                log.error("注册失败", e);
             }
         }
         return restResponse;
@@ -104,7 +107,7 @@ public class CommonController {
             if (e instanceof TipException) {
                 request.attribute("msg", e.getMessage());
             } else {
-                LOGGER.error("激活失败", e);
+                log.error("激活失败", e);
             }
         }
         return "active";
@@ -129,50 +132,51 @@ public class CommonController {
         if (null == user) {
             return;
         }
-        if (null != fileItem) {
+        if (null == fileItem) {
+            return;
+        }
 
-            Optional<String> type = request.query("type");
+        Optional<String> type = request.query("type");
 
-            String suffix = StringKit.fileExt(fileItem.fileName());
-            if (StringKit.isNotBlank(suffix)) {
-                suffix = "." + suffix;
+        String suffix = StringKit.fileExt(fileItem.fileName());
+        if (StringKit.isNotBlank(suffix)) {
+            suffix = "." + suffix;
+        }
+
+        if (!PatternKit.isImage(suffix)) {
+            return;
+        }
+        String savePath = "";
+        if (type.equals("avatar")) {
+            savePath = type + "/users/" + user.getUsername() + suffix;
+        } else {
+            String fileName = UUID.UU32() + suffix;
+            // topic/biezhi/s6vunp10vihq9rb239ln9lotjh.jpg
+            savePath = type + "/" + user.getUsername() + "/" + fileName;
+        }
+
+        String filePath = Constant.UPLOAD_FOLDER + File.separator + savePath;
+        File file = new File(filePath);
+        try {
+            if (file.exists()) {
+                file.delete();
+            }
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
             }
 
-            if (!PatternKit.isImage(suffix)) {
-                return;
-            }
-            String savePath = "";
-            if (type.equals("avatar")) {
-                savePath = type + "/users/" + user.getUsername() + suffix;
-            } else {
-                String fileName = UUID.UU32() + suffix;
-                // topic/biezhi/s6vunp10vihq9rb239ln9lotjh.jpg
-                savePath = type + "/" + user.getUsername() + "/" + fileName;
-            }
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(fileItem.data());
+            fos.close();
 
-            String filePath = Constant.UPLOAD_FOLDER + File.separator + savePath;
-            File file = new File(filePath);
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-                if (!file.getParentFile().exists()) {
-                    file.getParentFile().mkdirs();
-                }
+            Map<String, Object> map = new HashMap<>();
+            map.put("status", 200);
+            map.put("savekey", savePath);
+            map.put("url", Constant.IMG_URL + "/" + savePath);
+            response.json(map);
 
-                FileOutputStream fos = new FileOutputStream(file);
-                fos.write(fileItem.data());
-                fos.close();
-
-                Map<String, Object> map = new HashMap<>();
-                map.put("status", 200);
-                map.put("savekey", savePath);
-                map.put("url", Constant.IMG_URL + "/" + savePath);
-                response.json(map);
-
-            } catch (Exception e) {
-                LOGGER.error("上传失败", e);
-            }
+        } catch (Exception e) {
+            log.error("上传失败", e);
         }
     }
 

@@ -39,8 +39,8 @@ public class IndexController {
 	 * @param request
 	 * @return
 	 */
-    @GetRoute
-    public String index(Request request){
+	@GetRoute("/")
+	public String index(Request request){
 		String username = null != SessionUtils.getLoginUser() ? SessionUtils.getLoginUser().getUsername() : null;
 		List<HomeTopic> homeTopics = topicService.getTopics(username, null, 1, 9);
 		request.attribute("topics", homeTopics);

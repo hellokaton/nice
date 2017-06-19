@@ -37,29 +37,30 @@ public class UserController {
 
     @PostRoute("/setting")
     @JSON
-    public RestResponse setting(@QueryParam String nickname, @QueryParam String signature,
-                                @QueryParam String avatar, Request request){
-        RestResponse restResponse = new RestResponse();
+    public RestResponse setting(@QueryParam String nickname,
+                                @QueryParam String signature,
+                                @QueryParam String avatar,
+                                Request request) {
+
         try {
             User user = SessionUtils.getLoginUser();
             if (null == user) {
-                restResponse.setMsg("请登录后进行操作");
-                return restResponse;
+                return RestResponse.fail("请登录后进行操作");
             }
             User temp = new User();
             temp.setUsername(user.getUsername());
             boolean isUp = false;
-            if(StringKit.isNotBlank(nickname)){
+            if (StringKit.isNotBlank(nickname)) {
                 isUp = true;
                 temp.setNickname(nickname);
             }
 
-            if(StringKit.isNotBlank(signature)){
+            if (StringKit.isNotBlank(signature)) {
                 isUp = true;
                 temp.setSignature(signature);
             }
 
-            if(StringKit.isNotBlank(avatar)){
+            if (StringKit.isNotBlank(avatar)) {
                 isUp = true;
                 temp.setAvatar(avatar + "?t_" + System.currentTimeMillis());
             }
@@ -67,20 +68,21 @@ public class UserController {
             temp = isUp ? temp : null;
             user = userService.update(temp);
             SessionUtils.setLoginUser(request.session(), user);
-            restResponse.setSuccess(true);
-        } catch (Exception e){
+            return RestResponse.ok();
+        } catch (Exception e) {
+            String msg = "保存设置失败";
             if (e instanceof TipException) {
-                restResponse.setMsg(e.getMessage());
+                msg = e.getMessage();
             } else {
-                log.error("保存设置失败", e);
+                log.error(msg, e);
             }
+            return RestResponse.fail(msg);
         }
-        return restResponse;
     }
 
     @Route(value = "/up_pwd", method = HttpMethod.POST)
     @JSON
-    public RestResponse up_pwd(@QueryParam String newpwd){
+    public RestResponse up_pwd(@QueryParam String newpwd) {
         RestResponse restResponse = new RestResponse();
         try {
             User user = SessionUtils.getLoginUser();
@@ -94,7 +96,7 @@ public class UserController {
             temp.setPassword(pwd);
             userService.update(temp);
             restResponse.setSuccess(true);
-        } catch (Exception e){
+        } catch (Exception e) {
             if (e instanceof TipException) {
                 restResponse.setMsg(e.getMessage());
             } else {
