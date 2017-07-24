@@ -16,6 +16,6 @@ public interface StarsService {
 	 * @param username
 	 * @param tid
 	 */
-	void unstar(String username, String tid);
+	void unStar(String username, String tid);
 
 }

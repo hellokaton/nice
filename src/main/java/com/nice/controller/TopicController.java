@@ -6,30 +6,25 @@ import com.blade.mvc.http.Request;
 import com.blade.mvc.ui.RestResponse;
 import com.nice.exception.TipException;
 import com.nice.ext.HomeTopic;
+import com.nice.model.Comment;
 import com.nice.model.User;
-import com.nice.service.CommentService;
 import com.nice.service.StarsService;
 import com.nice.service.TopicService;
 import com.nice.service.UserService;
 import com.nice.utils.SessionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Random;
 
+@Slf4j
 @Path
 public class TopicController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TopicController.class);
 
     private Random r = new Random();
 
     @Inject
     private TopicService topicService;
-
-    @Inject
-    private CommentService commentService;
 
     @Inject
     private StarsService starsService;
@@ -59,7 +54,7 @@ public class TopicController {
     public RestResponse publish(@QueryParam String content, @QueryParam String title) {
 
         RestResponse restResponse = new RestResponse();
-        User user = SessionUtils.getLoginUser();
+        User         user         = SessionUtils.getLoginUser();
         if (null == user) {
             restResponse.setMsg("用户未登录");
             return restResponse;
@@ -73,7 +68,7 @@ public class TopicController {
             if (e instanceof TipException) {
                 restResponse.setMsg(e.getMessage());
             } else {
-                LOGGER.error("发布主题失败", e);
+                log.error("发布主题失败", e);
             }
         }
         return restResponse;
@@ -88,23 +83,24 @@ public class TopicController {
      */
     @PostRoute("/comment/:id")
     @JSON
-    public RestResponse comment(@PathParam String id, @QueryParam String comment) {
+    public RestResponse comment(@PathParam String id, Comment comment) {
 
         RestResponse restResponse = new RestResponse();
-        User user = SessionUtils.getLoginUser();
+        User         user         = SessionUtils.getLoginUser();
         if (null == user) {
             restResponse.setMsg("请登录后进行操作");
             return restResponse;
         }
         try {
             String username = user.getUsername();
-            commentService.comment(username, id, comment);
+            comment.setUsername(username);
+            comment.save();
             restResponse.setSuccess(true);
         } catch (Exception e) {
             if (e instanceof TipException) {
                 restResponse.setMsg(e.getMessage());
             } else {
-                LOGGER.error("发布主题失败", e);
+                log.error("发布主题失败", e);
             }
         }
         return restResponse;
@@ -121,7 +117,7 @@ public class TopicController {
     public RestResponse star(@PathParam String id) {
 
         RestResponse restResponse = new RestResponse();
-        User user = SessionUtils.getLoginUser();
+        User         user         = SessionUtils.getLoginUser();
         if (null == user) {
             restResponse.setMsg("请登录后进行操作");
             return restResponse;
@@ -134,7 +130,7 @@ public class TopicController {
             if (e instanceof TipException) {
                 restResponse.setMsg(e.getMessage());
             } else {
-                LOGGER.error("点赞失败", e);
+                log.error("点赞失败", e);
             }
         }
         return restResponse;
@@ -151,20 +147,20 @@ public class TopicController {
     public RestResponse unstar(@PathParam String id) {
 
         RestResponse restResponse = new RestResponse();
-        User user = SessionUtils.getLoginUser();
+        User         user         = SessionUtils.getLoginUser();
         if (null == user) {
             restResponse.setMsg("请登录后进行操作");
             return restResponse;
         }
         try {
             String username = user.getUsername();
-            starsService.unstar(username, id);
+            starsService.unStar(username, id);
             restResponse.setSuccess(true);
         } catch (Exception e) {
             if (e instanceof TipException) {
                 restResponse.setMsg(e.getMessage());
             } else {
-                LOGGER.error("点赞失败", e);
+                log.error("点赞失败", e);
             }
         }
         return restResponse;
@@ -195,10 +191,10 @@ public class TopicController {
     public RestResponse topics(@PathParam int isuser, @PathParam int page,
                                @QueryParam(defaultValue = "9") int limit) {
 
-        RestResponse restResponse = new RestResponse();
-        String cu = null != SessionUtils.getLoginUser() ? SessionUtils.getLoginUser().getUsername() : null;
-        String user = isuser == 1 ? cu : null;
-        List<HomeTopic> homeTopics = topicService.getTopics(cu, user, page, limit);
+        RestResponse    restResponse = new RestResponse();
+        String          cu           = null != SessionUtils.getLoginUser() ? SessionUtils.getLoginUser().getUsername() : null;
+        String          user         = isuser == 1 ? cu : null;
+        List<HomeTopic> homeTopics   = topicService.getTopics(cu, user, page, limit);
         restResponse.setPayload(homeTopics);
         restResponse.setSuccess(true);
         return restResponse;

@@ -3,8 +3,7 @@ package com.nice.config;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.blade.Blade;
 import com.blade.event.BeanProcessor;
-import com.blade.jdbc.ActiveRecord;
-import com.blade.jdbc.ar.SampleActiveRecord;
+import com.blade.jdbc.Base;
 import com.blade.mvc.view.template.JetbrickTemplateEngine;
 import com.nice.ext.Funcs;
 import jetbrick.template.JetGlobalContext;
@@ -28,8 +27,7 @@ public class DbProcessor implements BeanProcessor {
         try {
             props.load(in);
             DataSource dataSource = DruidDataSourceFactory.createDataSource(props);
-            ActiveRecord activeRecord = new SampleActiveRecord(dataSource);
-            blade.ioc().addBean(activeRecord);
+            Base.open(dataSource);
 
             JetbrickTemplateEngine templateEngine = new JetbrickTemplateEngine();
             JetGlobalContext context = templateEngine.getGlobalContext();

@@ -15,6 +15,7 @@ import com.nice.model.User;
 import com.nice.service.UserService;
 import com.nice.utils.SessionUtils;
 import com.nice.utils.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Path
 public class CommonController {
-
-    private static final Logger log = LoggerFactory.getLogger(CommonController.class);
 
     @Inject
     private UserService userService;
@@ -138,7 +138,7 @@ public class CommonController {
 
         Optional<String> type = request.query("type");
 
-        String suffix = StringKit.fileExt(fileItem.fileName());
+        String suffix = StringKit.fileExt(fileItem.getFileName());
         if (StringKit.isNotBlank(suffix)) {
             suffix = "." + suffix;
         }
@@ -166,7 +166,7 @@ public class CommonController {
             }
 
             FileOutputStream fos = new FileOutputStream(file);
-            fos.write(fileItem.data());
+            fos.write(fileItem.getData());
             fos.close();
 
             Map<String, Object> map = new HashMap<>();
