@@ -1,4 +1,4 @@
-package com.nice.ext;
+package com.nice.model.dto;
 
 import com.blade.jdbc.core.ActiveRecord;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.nice.config;
+package com.nice.hooks;
 
 import com.blade.ioc.annotation.Bean;
 import com.blade.ioc.annotation.Inject;
@@ -7,7 +7,8 @@ import com.blade.mvc.hook.Signature;
 import com.blade.mvc.hook.WebHook;
 import com.blade.mvc.http.Request;
 import com.blade.mvc.http.Response;
-import com.nice.model.User;
+import com.nice.config.Constant;
+import com.nice.model.entity.User;
 import com.nice.service.UserService;
 import com.nice.utils.SessionUtils;
 import com.nice.utils.Utils;

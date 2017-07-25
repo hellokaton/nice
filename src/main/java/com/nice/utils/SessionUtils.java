@@ -3,7 +3,7 @@ package com.nice.utils;
 import com.blade.mvc.WebContext;
 import com.blade.mvc.http.Session;
 import com.nice.config.Constant;
-import com.nice.model.User;
+import com.nice.model.entity.User;
 import com.blade.kit.StringKit;
 import com.blade.mvc.http.Request;
 import com.blade.mvc.http.Response;

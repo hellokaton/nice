@@ -1,7 +1,8 @@
 package com.nice.service;
 
-import com.nice.ext.HomeTopic;
+import com.nice.model.dto.HomeTopic;
 import com.nice.ext.ActionType;
+import com.nice.model.entity.Topic;
 
 import java.util.List;
 
@@ -11,12 +12,8 @@ public interface TopicService {
 
 	/**
 	 * 发布主题
-	 *
-	 * @param username
-	 * @param title
-	 * @param content
 	 */
-    void publish(String username, String title, String content);
+    void publish(Topic topic);
 
 	/**
 	 * 分页获取首页主题

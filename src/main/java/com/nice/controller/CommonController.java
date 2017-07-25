@@ -9,15 +9,16 @@ import com.blade.mvc.http.Request;
 import com.blade.mvc.http.Response;
 import com.blade.mvc.multipart.FileItem;
 import com.blade.mvc.ui.RestResponse;
+import com.blade.validator.annotation.Valid;
 import com.nice.config.Constant;
 import com.nice.exception.TipException;
-import com.nice.model.User;
+import com.nice.model.entity.User;
+import com.nice.model.param.LoginParam;
+import com.nice.model.param.SignupParam;
 import com.nice.service.UserService;
 import com.nice.utils.SessionUtils;
 import com.nice.utils.UUID;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,20 +35,15 @@ public class CommonController {
 
     /**
      * 用户登录
-     *
-     * @param username
-     * @param password
-     * @return
      */
     @PostRoute("signin")
     @JSON
-    public RestResponse signin(@QueryParam String username,
-                               @QueryParam String password,
+    public RestResponse signin(@Valid LoginParam loginParam,
                                Request request, Response response) {
 
         RestResponse restResponse = new RestResponse();
         try {
-            User user = userService.signin(username, password);
+            User user = userService.signin(loginParam);
             SessionUtils.setLoginUser(request.session(), user);
             SessionUtils.setCookie(response, Constant.USER_IN_COOKIE, user.getUsername());
             restResponse.setSuccess(true);
@@ -63,23 +59,15 @@ public class CommonController {
 
     /**
      * 账户注册
-     *
-     * @param username
-     * @param password
-     * @param email
-     * @param avatar
      * @return
      */
     @Route(value = "signup", method = HttpMethod.POST)
     @JSON
-    public RestResponse signup(@QueryParam String username,
-                               @QueryParam String password,
-                               @QueryParam String email,
-                               @QueryParam String avatar) {
+    public RestResponse signup(@Valid SignupParam signupParam) {
 
         RestResponse restResponse = new RestResponse();
         try {
-            userService.signup(username, password, email, avatar);
+            userService.signup(signupParam);
             restResponse.setSuccess(true);
         } catch (Exception e) {
             if (e instanceof TipException) {
@@ -156,7 +144,7 @@ public class CommonController {
         }
 
         String filePath = Constant.UPLOAD_FOLDER + File.separator + savePath;
-        File file = new File(filePath);
+        File   file     = new File(filePath);
         try {
             if (file.exists()) {
                 file.delete();

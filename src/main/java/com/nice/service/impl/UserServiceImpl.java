@@ -8,8 +8,10 @@ import com.blade.kit.StringKit;
 import com.blade.kit.UUID;
 import com.nice.exception.TipException;
 import com.nice.ext.ActionType;
-import com.nice.model.Acode;
-import com.nice.model.User;
+import com.nice.model.entity.Acode;
+import com.nice.model.entity.User;
+import com.nice.model.param.LoginParam;
+import com.nice.model.param.SignupParam;
 import com.nice.service.UserService;
 import com.nice.utils.EmailUtils;
 import com.nice.utils.ThreadUtils;
@@ -56,19 +58,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void signup(String username, String password, String email, String avatar) {
-        if (StringKit.isBlank(username)) {
-            throw new TipException("用户名不能为空");
-        }
-        if (StringKit.isBlank(password)) {
-            throw new TipException("密码不能为空");
-        }
-        if (StringKit.isBlank(email)) {
-            throw new TipException("邮箱不能为空");
-        }
+    public void signup(SignupParam signupParam) {
 
         User user = new User();
-        user.setUsername(username);
+        user.setUsername(signupParam.getUsername());
 
         long count = user.count();
         if (count > 0) {
@@ -76,36 +69,37 @@ public class UserServiceImpl implements UserService {
         }
 
         User temp = new User();
-        temp.setEmail(email);
+        temp.setEmail(signupParam.getEmail());
         count = temp.count();
         if (count > 0) {
             throw new TipException("该邮箱已经被绑定, 请更换");
         }
 
-        String pwd = EncrypKit.md5(username + password);
+        String pwd = EncrypKit.md5(signupParam.getUsername() + signupParam.getPassword());
         user.setPassword(pwd);
-        user.setEmail(email);
+        user.setEmail(signupParam.getEmail());
         user.setState(2);
-        if (StringKit.isBlank(avatar)) {
+        String avatar = signupParam.getAvatar();
+        if (StringKit.isBlank(signupParam.getAvatar())) {
             avatar = "";
         }
         user.setAvatar(avatar);
         user.setCreated(DateKit.nowUnix());
-        user.setNickname(username);
+        user.setNickname(signupParam.getUsername());
 
         user.save();
 
         ThreadUtils.submit(() -> {
             // 发送激活邮件
             Acode acode = Acode.builder()
-                    .username(username)
+                    .username(signupParam.getUsername())
                     .type("signup")
                     .created(DateKit.nowUnix())
                     .expired(0)
                     .code(UUID.UU32())
                     .build();
             acode.save();
-            EmailUtils.sendSignup(email, username, acode.getCode());
+            EmailUtils.sendSignup(signupParam.getEmail(), signupParam.getUsername(), acode.getCode());
         });
 
     }
@@ -137,23 +131,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User signin(String loginname, String password) {
-
-        if (StringKit.isBlank(loginname) || StringKit.isBlank(password)) {
+    public User signin(LoginParam loginParam) {
+        if (null == loginParam) {
             throw new TipException("用户名和密码不能为空");
         }
 
         User user = new User();
-        user.where("username", loginname).or("email", loginname);
+        user.where("username", loginParam.getUsername()).or("email", loginParam.getUsername());
         long count = user.count();
         if (count < 1) {
             throw new TipException("不存在的用户");
         }
 
-        String pwd = EncrypKit.md5(loginname + password);
+        String pwd = EncrypKit.md5(loginParam.getUsername() + loginParam.getPassword());
         String sql = "select * from t_user where (username = ? or email = ?) and password = ?";
-
-        User u = user.query(sql, loginname, loginname, pwd);
+        User   u   = user.query(sql, loginParam.getUsername(), loginParam.getUsername(), pwd);
         if (null == u) {
             throw new TipException("用户名或密码错误");
         }

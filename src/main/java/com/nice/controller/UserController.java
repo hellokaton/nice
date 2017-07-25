@@ -2,25 +2,24 @@ package com.nice.controller;
 
 import com.blade.ioc.annotation.Inject;
 import com.blade.kit.EncrypKit;
-import com.blade.kit.StringKit;
 import com.blade.mvc.annotation.*;
 import com.blade.mvc.http.HttpMethod;
 import com.blade.mvc.http.Request;
 import com.blade.mvc.ui.RestResponse;
 import com.nice.exception.TipException;
-import com.nice.model.User;
+import com.nice.model.entity.User;
 import com.nice.service.UserService;
 import com.nice.utils.SessionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Optional;
 
 /**
  * Created by biezhi on 2017/2/14.
  */
+@Slf4j
 @Path
 public class UserController {
-
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Inject
     private UserService userService;
@@ -31,42 +30,20 @@ public class UserController {
      * @return
      */
     @GetRoute("/setting")
-    public String settingPage() {
+    public String setting() {
         return "setting";
     }
 
     @PostRoute("/setting")
     @JSON
-    public RestResponse setting(@QueryParam String nickname,
-                                @QueryParam String signature,
-                                @QueryParam String avatar,
-                                Request request) {
+    public RestResponse doSetting(Optional<User> userOptional, Request request) {
 
         try {
             User user = SessionUtils.getLoginUser();
             if (null == user) {
                 return RestResponse.fail("请登录后进行操作");
             }
-            User temp = new User();
-            temp.setUsername(user.getUsername());
-            boolean isUp = false;
-            if (StringKit.isNotBlank(nickname)) {
-                isUp = true;
-                temp.setNickname(nickname);
-            }
-
-            if (StringKit.isNotBlank(signature)) {
-                isUp = true;
-                temp.setSignature(signature);
-            }
-
-            if (StringKit.isNotBlank(avatar)) {
-                isUp = true;
-                temp.setAvatar(avatar + "?t_" + System.currentTimeMillis());
-            }
-
-            temp = isUp ? temp : null;
-            user = userService.update(temp);
+            userOptional.ifPresent(temp -> temp.update(user.getUsername()));
             SessionUtils.setLoginUser(request.session(), user);
             return RestResponse.ok();
         } catch (Exception e) {
@@ -82,7 +59,7 @@ public class UserController {
 
     @Route(value = "/up_pwd", method = HttpMethod.POST)
     @JSON
-    public RestResponse up_pwd(@QueryParam String newpwd) {
+    public RestResponse updatePassword(@QueryParam String newpwd) {
         RestResponse restResponse = new RestResponse();
         try {
             User user = SessionUtils.getLoginUser();

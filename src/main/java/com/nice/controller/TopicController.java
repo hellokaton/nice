@@ -4,10 +4,12 @@ import com.blade.ioc.annotation.Inject;
 import com.blade.mvc.annotation.*;
 import com.blade.mvc.http.Request;
 import com.blade.mvc.ui.RestResponse;
+import com.blade.validator.annotation.Valid;
 import com.nice.exception.TipException;
-import com.nice.ext.HomeTopic;
-import com.nice.model.Comment;
-import com.nice.model.User;
+import com.nice.model.dto.HomeTopic;
+import com.nice.model.entity.Comment;
+import com.nice.model.entity.Topic;
+import com.nice.model.entity.User;
 import com.nice.service.StarsService;
 import com.nice.service.TopicService;
 import com.nice.service.UserService;
@@ -25,12 +27,10 @@ public class TopicController {
 
     @Inject
     private TopicService topicService;
-
     @Inject
     private StarsService starsService;
-
     @Inject
-    private UserService userService;
+    private UserService  userService;
 
     /**
      * 发布主题
@@ -51,39 +51,37 @@ public class TopicController {
      */
     @PostRoute("/publish")
     @JSON
-    public RestResponse publish(@QueryParam String content, @QueryParam String title) {
-
-        RestResponse restResponse = new RestResponse();
-        User         user         = SessionUtils.getLoginUser();
+    public RestResponse publish(@Valid Topic topic) {
+        User user = SessionUtils.getLoginUser();
         if (null == user) {
-            restResponse.setMsg("用户未登录");
-            return restResponse;
+            return RestResponse.fail("用户未登录");
         }
 
-        String username = user.getUsername();
         try {
-            topicService.publish(username, title, content);
-            restResponse.setSuccess(true);
+            String username = user.getUsername();
+            topic.setUsername(username);
+            topicService.publish(topic);
+            return RestResponse.ok();
         } catch (Exception e) {
+            String msg = "发布主题失败";
             if (e instanceof TipException) {
-                restResponse.setMsg(e.getMessage());
+                msg = e.getMessage();
             } else {
                 log.error("发布主题失败", e);
             }
+            return RestResponse.fail(msg);
         }
-        return restResponse;
     }
 
     /**
      * 评论主题
      *
-     * @param id
      * @param comment
      * @return
      */
-    @PostRoute("/comment/:id")
+    @PostRoute("/comment")
     @JSON
-    public RestResponse comment(@PathParam String id, Comment comment) {
+    public RestResponse comment(Comment comment) {
 
         RestResponse restResponse = new RestResponse();
         User         user         = SessionUtils.getLoginUser();

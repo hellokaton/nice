@@ -3,7 +3,7 @@ package com.nice.service.impl;
 import com.blade.ioc.annotation.Bean;
 import com.blade.ioc.annotation.Inject;
 import com.nice.ext.ActionType;
-import com.nice.model.Stars;
+import com.nice.model.entity.Stars;
 import com.nice.service.StarsService;
 import com.nice.service.TopicService;
 

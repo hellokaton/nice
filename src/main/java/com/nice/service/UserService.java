@@ -1,7 +1,9 @@
 package com.nice.service;
 
 import com.nice.ext.ActionType;
-import com.nice.model.User;
+import com.nice.model.entity.User;
+import com.nice.model.param.LoginParam;
+import com.nice.model.param.SignupParam;
 
 import java.util.List;
 
@@ -16,12 +18,8 @@ public interface UserService {
 	/**
 	 * 用户注册
 	 *
-	 * @param username
-	 * @param password
-	 * @param email
-	 * @param avatar
 	 */
-    void signup(String username, String password, String email, String avatar);
+    void signup(SignupParam signupParam);
 
 	/**
 	 * 激活用户
@@ -32,12 +30,9 @@ public interface UserService {
 
 	/**
 	 * 用户登录
-	 *
-	 * @param loginname
-	 * @param password
 	 * @return
 	 */
-    User signin(String loginname, String password);
+    User signin(LoginParam loginParam);
 
 	/**
 	 * 更新次数

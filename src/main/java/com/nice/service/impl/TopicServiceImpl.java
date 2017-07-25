@@ -9,8 +9,8 @@ import com.blade.kit.DateKit;
 import com.blade.kit.StringKit;
 import com.nice.exception.TipException;
 import com.nice.ext.ActionType;
-import com.nice.ext.HomeTopic;
-import com.nice.model.Topic;
+import com.nice.model.dto.HomeTopic;
+import com.nice.model.entity.Topic;
 import com.nice.service.TopicService;
 import com.nice.service.UserService;
 import com.nice.utils.UUID;
@@ -36,23 +36,16 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public void publish(String username, String title, String content) {
-        if (StringKit.isBlank(username) || StringKit.isBlank(content)) {
-            throw new TipException("参数不能为空");
-        }
+    public void publish(Topic topic) {
         String id    = UUID.UU16();
-        Topic  topic = new Topic();
         topic.setId(id);
-        topic.setUsername(username);
         topic.setCreated(DateKit.nowUnix());
-        topic.setTitle(title);
-        topic.setContent(content);
         topic.setComments(0);
         topic.setStars(0);
 
         topic.save();
 
-        userService.upCount(ActionType.topics, username, 1);
+        userService.upCount(ActionType.topics, topic.getUsername(), 1);
     }
 
     @Override

@@ -33,6 +33,12 @@
             <version>${blade-jdbc.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.bladejava</groupId>
+            <artifactId>blade-validator</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
         <!-- 模板引擎 -->
         <dependency>
             <groupId>com.bladejava</groupId>

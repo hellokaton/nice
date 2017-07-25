@@ -1,4 +1,4 @@
-package com.nice.model;
+package com.nice.model.entity;
 
 import com.blade.jdbc.annotation.Table;
 import com.blade.jdbc.core.ActiveRecord;

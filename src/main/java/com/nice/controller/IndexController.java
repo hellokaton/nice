@@ -5,24 +5,20 @@ import com.blade.ioc.annotation.Inject;
 import com.blade.mvc.annotation.GetRoute;
 import com.blade.mvc.annotation.Path;
 import com.blade.mvc.annotation.QueryParam;
-import com.blade.mvc.annotation.Route;
-import com.blade.mvc.http.HttpMethod;
 import com.blade.mvc.http.Request;
-import com.nice.ext.HomeTopic;
-import com.nice.model.User;
+import com.nice.model.dto.HomeTopic;
+import com.nice.model.entity.User;
 import com.nice.service.StarsService;
 import com.nice.service.TopicService;
 import com.nice.service.UserService;
 import com.nice.utils.SessionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 @Path
 public class IndexController {
-
-    private static final Logger log = LoggerFactory.getLogger(IndexController.class);
 
 	@Inject
 	private TopicService topicService;

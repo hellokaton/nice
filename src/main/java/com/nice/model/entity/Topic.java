@@ -1,7 +1,8 @@
-package com.nice.model;
+package com.nice.model.entity;
 
 import com.blade.jdbc.annotation.Table;
 import com.blade.jdbc.core.ActiveRecord;
+import com.blade.validator.annotation.NotEmpty;
 import lombok.Data;
 
 //
@@ -14,8 +15,10 @@ public class Topic extends ActiveRecord {
     // 发布人
     private String username;
     // 标题
+    @NotEmpty(message = "标题不能为空")
     private String title;
     // 图片
+    @NotEmpty(message = "内容不能为空")
     private String content;
     // 点赞数
     private Integer stars;
