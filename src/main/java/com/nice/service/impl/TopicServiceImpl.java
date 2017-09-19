@@ -66,7 +66,7 @@ public class TopicServiceImpl implements TopicService {
         }
 
         HomeTopic       homeTopic     = new HomeTopic();
-        Page<HomeTopic> homeTopicPage = homeTopic.page(new PageRow(page, limit), sql);
+        Page<HomeTopic> homeTopicPage = homeTopic.page(new PageRow(page, limit), sql, null);
         if (null != homeTopicPage) {
             return homeTopicPage.getRows();
         }

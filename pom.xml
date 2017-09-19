@@ -14,8 +14,8 @@
         <druid.version>1.0.24</druid.version>
         <common-email.version>1.4</common-email.version>
         <blade-tpl.verion>0.1.0</blade-tpl.verion>
-        <blade-jdbc.version>0.2.0</blade-jdbc.version>
-        <blade-mvc.version>2.0.1-alpha1</blade-mvc.version>
+        <blade-jdbc.version>0.2.2-alpha2</blade-jdbc.version>
+        <blade-mvc.version>2.0.2-SNAPSHOT</blade-mvc.version>
     </properties>
 
     <dependencies>
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.bladejava</groupId>
             <artifactId>blade-validator</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.2</version>
         </dependency>
 
         <!-- 模板引擎 -->
@@ -71,6 +71,19 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>oss-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <finalName>nice</finalName>

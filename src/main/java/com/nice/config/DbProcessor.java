@@ -3,6 +3,7 @@ package com.nice.config;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.blade.Blade;
 import com.blade.event.BeanProcessor;
+import com.blade.ioc.annotation.Bean;
 import com.blade.jdbc.Base;
 import com.blade.mvc.view.template.JetbrickTemplateEngine;
 import com.nice.ext.Funcs;
@@ -19,6 +20,7 @@ import java.util.Properties;
  * @author biezhi
  * 18/06/2017
  */
+@Bean
 public class DbProcessor implements BeanProcessor {
 
     @Override
